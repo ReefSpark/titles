@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 const users = () => {
     return {
         async login(req, res) {
-            try {
-                let data = req.body.data;
+            try {   
+                let data = req.body;
                 let sql = await controller.conectionAndQuery();
                 const check = await sql.query`select * from user_info where mobile=${data.mobile}`;
                 if (check.recordset.length == 0) {
