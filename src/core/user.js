@@ -9,7 +9,7 @@ const users = () => {
                 let sql = await controller.conectionAndQuery();
                 const check = await sql.query`select * from user_info where mobile=${data.mobile}`;
                 if (check.recordset.length == 0) {
-                    return res.status(400).send(controller.errorMsgFormat("Please register this mobile number"));
+                    return res.status(200).send(controller.errorMsgFormat("Please register this mobile number"));
                 }
                 //let passwordCompare = await bcrypt.compareSync(data.password, check.password);
                 // if (!passwordCompare) {
@@ -18,7 +18,7 @@ const users = () => {
                 //     }, 'user', 400));
                 // }
                 if (check.recordset[0].UserPassword != data.password) {
-                    return res.status(400).send(controller.errorMsgFormat("Your password is incorrect"));
+                    return res.status(200).send(controller.errorMsgFormat("Your password is incorrect"));
                 }
                 delete check.recordset[0].UserPassword;
                 let user = check.recordset[0];
