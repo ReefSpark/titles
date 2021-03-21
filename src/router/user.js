@@ -11,16 +11,12 @@ router.post('/login', async (req, res) => {
     try {
         let { error } = await validation.login(req.body.data)
         if (error) {
-            return res.status(400).send(controller.errorFormat({
-                "message": error.message
-            }, "user", 400));
+            return res.status(400).send(controller.errorFormat(error.message));
         }
         user.login(req, res)
     }
     catch (err) {
-        return res.status(500).send(controller.errorMsgFormat({
-            "message": err.message
-        }, "user", 500));
+        return res.status(500).send(controller.errorMsgFormat(err.message));
     }
 });
 
@@ -29,9 +25,7 @@ router.post('/logout', auth, async (req, res) => {
         user.logout(req, res)
     }
     catch (err) {
-        return res.status(500).send(controller.errorMsgFormat({
-            "message": err.message
-        }, "user", 500));
+        return res.status(500).send(controller.errorMsgFormat(err.message));
     }
 });
 

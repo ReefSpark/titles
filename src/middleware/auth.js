@@ -30,8 +30,6 @@ module.exports = async (req, res, next) => {
         }
     }
     catch (error) {
-        return res.status(401).json(controller.errorMsgFormat({
-            message: error.message
-        }, 'user', 401));
+        return res.status(401).send(controller.errorMsgFormat(error.message));
     }
 };

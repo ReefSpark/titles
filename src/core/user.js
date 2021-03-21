@@ -9,9 +9,7 @@ const users = () => {
                 let sql = await controller.conectionAndQuery();
                 const check = await sql.query`select * from user_info where mobile=${data.mobile}`;
                 if (check.recordset.length == 0) {
-                    return res.status(400).send(controller.errorMsgFormat({
-                        "message": "Please register this mobile number"
-                    }, 'user', 400));
+                    return res.status(400).send(controller.errorMsgFormat("Please register this mobile number"));
                 }
                 //let passwordCompare = await bcrypt.compareSync(data.password, check.password);
                 // if (!passwordCompare) {
@@ -20,19 +18,18 @@ const users = () => {
                 //     }, 'user', 400));
                 // }
                 if (check.recordset[0].UserPassword != data.password) {
-                    return res.status(400).send(controller.errorMsgFormat({
-                        "message": "Your password is incorrect"
-                    }, 'user', 400));
+                    return res.status(400).send(controller.errorMsgFormat("Your password is incorrect"));
                 }
-                return res.status(200).send(controller.successFormat({
-                    message: "Login successfully",
-                    token: await this.createToken(check, res)
-                }, 'user', 200));
+                delete check.recordset[0].UserPassword;
+                let user = check.recordset[0];
+                return res.status(200).send(controller.successFormat("Login successfully",
+                    { 
+                        user,
+                        access_token: await this.createToken(check, res) 
+                    }));
             }
             catch (err) {
-                return res.status(400).send(controller.errorMsgFormat({
-                    "message": err.message
-                }, 'user', 400));
+                return res.status(400).send(controller.errorMsgFormat(err.message));
             }
         },
 
@@ -54,9 +51,7 @@ const users = () => {
                 await sql.query`INSERT INTO user_token (mobile, token) VALUES (${user.recordset[0].mobile}, ${tokens})`
                 return tokens;
             } catch (err) {
-                return res.status(400).send(controller.errorMsgFormat({
-                    "message": err.message
-                }, 'user', 400));
+                return res.status(400).send(controller.errorMsgFormat(err.message));
             }
 
         },
@@ -65,15 +60,10 @@ const users = () => {
             try {
                 let sql = await controller.conectionAndQuery();
                 await sql.query`DELETE FROM user_token WHERE mobile=${req.user.mobile};`;
-                console.log("Result:",result)
-                return res.status(200).send(controller.successFormat({
-                    message: "Logout successfully",
-                }, 'user', 200));
+                return res.status(200).send(controller.successFormat("Logout successfully"));
 
             } catch (err) {
-                return res.status(400).send(controller.errorMsgFormat({
-                    "message": err.message
-                }, 'user', 400));
+                return res.status(400).send(controller.errorMsgFormat(err.message));
             }
 
         }

@@ -2,13 +2,10 @@
 const sql = require('mssql')
 const controller = () => {
     return {
-        errorMsgFormat(error, type = 'service', code = 400) {
+        errorMsgFormat(message) {
             return Object.assign({
-                "code": code,
-                "errors": true,
-                "data": {
-                    error
-                }
+                "status":false,
+                "message": message
             });
         },
 
@@ -22,16 +19,14 @@ const controller = () => {
             } else {
                 errors = error;
             }
-            return this.errorMsgFormat({ message: errors }, 'service', 400);
+            return this.errorMsgFormat(errors);
         },
 
-        successFormat(res, id = null, type = 'service', code = 200) {
+        successFormat(message,res) {
             return Object.assign({
-                "code": code,
-                "errors": false,
-                "data": {
-                    res
-                }
+                "status":true,
+                "message": message,
+                "data":res
             });
         },
 

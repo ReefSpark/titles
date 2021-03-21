@@ -8,26 +8,51 @@ const productDetail = () => {
                 //WHERE ledger REGEXP ${req.params.item}   
                 let data = req.params.item;
                 if (data.length < 3) {
-                    return res.status(200).send(controller.successFormat({
+                    return res.status(200).send(controller.successFormat("Data Successfully", {
                         result: []
-                    }, 'product-details', 200));
+                    }));
                 }
                 let sql = await controller.conectionAndQuery()
                 let check = await sql.query`SELECT * FROM stg_item_details WHERE Name LIKE ${data}+'%'`;
-                console.log("Check:", check)
                 if (check.recordset.length == 0) {
-                    return res.status(200).send(controller.successFormat({
+                    return res.status(200).send(controller.successFormat("Data Successfully", {
                         result: []
-                    }, 'product-details', 200));
+                    }));
                 }
-                return res.status(200).send(controller.successFormat({
+                return res.status(200).send(controller.successFormat("Data Successfully", {
                     result: check.recordset
-                }, 'product-details', 200));
+                }));
             }
             catch (err) {
-                return res.status(400).send(controller.errorMsgFormat({
-                    "message": err.message
-                }, 'product-details', 400));
+                return res.status(400).send(controller.errorMsgFormat(err.message));
+            }
+        },
+        async getProduct(req, res) {
+            try {
+                let query = req.query;
+                if (query.from == null || undefined && query.to == null || undefined) {
+                    return res.status(400).json(controller.errorMsgFormat("From and To must be defined"));
+                }
+                let sql = await controller.conectionAndQuery()
+                let check = await sql.query`select * from stg_item_details`;
+                if (check.recordset.length == 0) {
+                    return res.status(200).send(controller.successFormat("Data Successfully", {
+                        result: []
+                    }));
+                }
+                let result = [];
+                let i = query.from;
+                while (i < query.to) {
+                    result.push(check.recordset[i]);
+                    i++;
+                }
+                console.log("Result:",result.length);
+                return res.status(200).send(controller.successFormat("Data Successfully", {
+                    result: result
+                }));
+            }
+            catch (err) {
+                return res.status(400).send(controller.errorMsgFormat(err.message));
             }
         },
         async productHistory(req, res) {
@@ -49,9 +74,7 @@ const productDetail = () => {
                 }, 'product-details', 200));
             }
             catch (err) {
-                return res.status(400).send(controller.errorMsgFormat({
-                    "message": err
-                }, 'product-details', 400));
+                return res.status(400).send(controller.errorMsgFormat(err.message));
             }
         }
     }
