@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const users = () => {
     return {
         async login(req, res) {
-            try {   
+            try {
                 let data = req.body;
                 let sql = await controller.conectionAndQuery();
                 const check = await sql.query`select * from user_info where mobile=${data.mobile}`;
@@ -23,9 +23,9 @@ const users = () => {
                 delete check.recordset[0].UserPassword;
                 let user = check.recordset[0];
                 return res.status(200).send(controller.successFormat("Login successfully",
-                    { 
+                    {
                         user,
-                        access_token: await this.createToken(check, res) 
+                        access_token: await this.createToken(check, res)
                     }));
             }
             catch (err) {
@@ -55,6 +55,28 @@ const users = () => {
             }
 
         },
+
+        async forgetPassword(req, res) {
+
+            try {
+                let data = req.body;
+                let sql = await controller.conectionAndQuery();
+                const check = await sql.query`select * from user_info where mobile=${data.mobile}`;
+                if (check.recordset.length == 0) {
+                    return res.status(200).send(controller.errorMsgFormat("Please register this mobile number"));
+                }
+                //SMS INTEGERATION
+                return res.status(200).send(controller.successFormat("Successfully",
+                    {
+                        password:check.recordset[0].UserPassword
+                    }));
+
+            } catch (err) {
+                return res.status(400).send(controller.errorMsgFormat(err.message));
+            }
+
+        },
+
         async logout(req, res) {
 
             try {

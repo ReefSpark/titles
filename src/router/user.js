@@ -9,11 +9,24 @@ const auth = require('../middleware/auth')
 
 router.post('/login', async (req, res) => {
     try {
-        let { error } = await validation.login(req.body.data)
+        let { error } = await validation.login(req.body)
         if (error) {
             return res.status(400).send(controller.errorFormat(error.message));
         }
         user.login(req, res)
+    }
+    catch (err) {
+        return res.status(500).send(controller.errorMsgFormat(err.message));
+    }
+});
+
+router.post('/forget-password', async (req, res) => {
+    try {
+        let { error } = await validation.forgetPassword(req.body)
+        if (error) {
+            return res.status(400).send(controller.errorFormat(error.message));
+        }
+        user.forgetPassword(req, res)
     }
     catch (err) {
         return res.status(500).send(controller.errorMsgFormat(err.message));
