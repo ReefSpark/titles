@@ -46,7 +46,6 @@ const productDetail = () => {
                     result.push(check.recordset[i]);
                     i++;
                 }
-                console.log("Result:",result.length);
                 return res.status(200).send(controller.successFormat("Data Successfully", {
                     result: result
                 }));

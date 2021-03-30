@@ -3,7 +3,7 @@ class validation {
 
     async login(req) {
         let schema = Joi.object().keys({
-            mobile: Joi.string().min(10).max(10).required(),
+            userId: Joi.string().required(),
             password:Joi.string().required()
         });
 
@@ -12,7 +12,7 @@ class validation {
 
     async forgetPassword(req) {
         let schema = Joi.object().keys({
-            mobile: Joi.string().min(10).max(10).required()
+            userId: Joi.string().required()
         });
 
         return schema.validate(req, { abortEarly: false });

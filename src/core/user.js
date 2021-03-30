@@ -7,9 +7,9 @@ const users = () => {
             try {
                 let data = req.body;
                 let sql = await controller.conectionAndQuery();
-                const check = await sql.query`select * from user_info where mobile=${data.mobile}`;
+                const check = await sql.query`select * from STG_LEDGERDETAILS where USERID=${data.userId}`;
                 if (check.recordset.length == 0) {
-                    return res.status(200).send(controller.errorMsgFormat("Please register this mobile number"));
+                    return res.status(200).send(controller.errorMsgFormat("Please register this User ID"));
                 }
                 //let passwordCompare = await bcrypt.compareSync(data.password, check.password);
                 // if (!passwordCompare) {
@@ -43,12 +43,12 @@ const users = () => {
                 });
                 let tokenAccess = Object.assign({}, {
                     user: user.recordset[0].UserId,
-                    mobile: user.recordset[0].mobile
+                    ledger:user.recordset[0].LEDGER
                 });
                 let tokens = await jwt.sign(tokenAccess, config.get('secrete.key'), jwtOptions);
                 let sql = await controller.conectionAndQuery();
-                await sql.query`DELETE FROM user_token WHERE mobile=${user.recordset[0].mobile};`;
-                await sql.query`INSERT INTO user_token (mobile, token) VALUES (${user.recordset[0].mobile}, ${tokens})`
+                await sql.query`DELETE FROM user_token WHERE UserId=${user.recordset[0].UserId}`;
+                await sql.query`INSERT INTO user_token (UserId, token) VALUES (${user.recordset[0].UserId}, ${tokens})`
                 return tokens;
             } catch (err) {
                 return res.status(400).send(controller.errorMsgFormat(err.message));
@@ -61,14 +61,14 @@ const users = () => {
             try {
                 let data = req.body;
                 let sql = await controller.conectionAndQuery();
-                const check = await sql.query`select * from user_info where mobile=${data.mobile}`;
+                const check = await sql.query`select * from STG_LEDGERDETAILS where UserId=${data.userId}`;
                 if (check.recordset.length == 0) {
-                    return res.status(200).send(controller.errorMsgFormat("Please register this mobile number"));
+                    return res.status(200).send(controller.errorMsgFormat("Please register this User ID"));
                 }
                 //SMS INTEGERATION
                 return res.status(200).send(controller.successFormat("Successfully",
                     {
-                        password:check.recordset[0].UserPassword
+                        password: check.recordset[0].UserPassword
                     }));
 
             } catch (err) {
@@ -81,13 +81,31 @@ const users = () => {
 
             try {
                 let sql = await controller.conectionAndQuery();
-                await sql.query`DELETE FROM user_token WHERE mobile=${req.user.mobile};`;
+                await sql.query`DELETE FROM user_token  WHERE UserId=${req.user.user};`;
                 return res.status(200).send(controller.successFormat("Logout successfully"));
 
             } catch (err) {
                 return res.status(400).send(controller.errorMsgFormat(err.message));
             }
 
+        },
+
+        async getLedgerHistory(req, res) {
+            try {
+                let sql = await controller.conectionAndQuery()
+                let check = await sql.query`select * from stg_bill_details where Ledger=${req.user.ledger}`;
+                if (check.recordset.length == 0) {
+                    return res.status(200).send(controller.successFormat("Data Successfully", {
+                        result: []
+                    }));
+                }
+                return res.status(200).send(controller.successFormat("Data Successfully", {
+                    result: check.recordset[0]
+                }));
+            }
+            catch (err) {
+                return res.status(400).send(controller.errorMsgFormat(err.message));
+            }
         }
     }
 }

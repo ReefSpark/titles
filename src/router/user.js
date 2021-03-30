@@ -42,6 +42,15 @@ router.post('/logout', auth, async (req, res) => {
     }
 });
 
+router.get('/ledger', auth, async (req, res) => {
+    try {
+        user.getLedgerHistory(req, res);
+    }
+    catch (err) {
+        return res.status(500).send(controller.errorFormat(err.message));
+    }
+});
+
 
 
 module.exports = router;

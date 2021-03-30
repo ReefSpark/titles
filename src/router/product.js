@@ -30,4 +30,6 @@ router.get('/history', async (req, res) => {
         return res.status(500).send(controller.errorFormat(err.message));
     }
 });
+
+
 module.exports = router;
