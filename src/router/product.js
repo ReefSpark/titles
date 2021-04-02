@@ -4,7 +4,7 @@ const controller = require('../core/controller')
 const product = require('../core/product');
 const auth = require('../middleware/auth')
 
-router.get('/', async (req, res) => {
+router.get('/',auth, async (req, res) => {
     try {
         product.getProduct(req, res)
     }

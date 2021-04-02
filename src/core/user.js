@@ -7,7 +7,8 @@ const users = () => {
             try {
                 let data = req.body;
                 let sql = await controller.conectionAndQuery();
-                const check = await sql.query`select * from STG_LEDGERDETAILS where USERID=${data.userId}`;
+                const check = await sql.query`select * from STG_LEDGERDETAILS where AlterId=${data.userId}`;
+                console.log('Check:',check)
                 if (check.recordset.length == 0) {
                     return res.status(200).send(controller.errorMsgFormat("Please register this User ID"));
                 }
@@ -42,13 +43,13 @@ const users = () => {
                     expiresIn: config.get('secrete.expiry')
                 });
                 let tokenAccess = Object.assign({}, {
-                    user: user.recordset[0].UserId,
+                    user: user.recordset[0].AlterId,
                     ledger:user.recordset[0].LEDGER
                 });
                 let tokens = await jwt.sign(tokenAccess, config.get('secrete.key'), jwtOptions);
                 let sql = await controller.conectionAndQuery();
-                await sql.query`DELETE FROM user_token WHERE UserId=${user.recordset[0].UserId}`;
-                await sql.query`INSERT INTO user_token (UserId, token) VALUES (${user.recordset[0].UserId}, ${tokens})`
+                await sql.query`DELETE FROM user_token WHERE UserId=${user.recordset[0].AlterId}`;
+                await sql.query`INSERT INTO user_token (UserId, token) VALUES (${user.recordset[0].AlterId}, ${tokens})`
                 return tokens;
             } catch (err) {
                 return res.status(400).send(controller.errorMsgFormat(err.message));
@@ -61,7 +62,7 @@ const users = () => {
             try {
                 let data = req.body;
                 let sql = await controller.conectionAndQuery();
-                const check = await sql.query`select * from STG_LEDGERDETAILS where UserId=${data.userId}`;
+                const check = await sql.query`select * from STG_LEDGERDETAILS where AlterId=${data.userId}`;
                 if (check.recordset.length == 0) {
                     return res.status(200).send(controller.errorMsgFormat("Please register this User ID"));
                 }
@@ -100,7 +101,7 @@ const users = () => {
                     }));
                 }
                 return res.status(200).send(controller.successFormat("Data Successfully", {
-                    result: check.recordset[0]
+                    result: check.recordset
                 }));
             }
             catch (err) {

@@ -17,7 +17,7 @@ module.exports = async (req, res, next) => {
         if (checkToken.recordset.length == 0 ) {
             throw new Error('Authentication failed. Your request could not be authenticated.');
         }
-        const checkUser = await sql.query`SELECT * FROM STG_LEDGERDETAILS WHERE UserId = ${dataUser.user}`;
+        const checkUser = await sql.query`SELECT * FROM STG_LEDGERDETAILS WHERE AlterId = ${dataUser.user}`;
         if (checkUser.recordset.length == 0) {
             throw new Error('Authentication failed. Your request could not be authenticated."');
         }
