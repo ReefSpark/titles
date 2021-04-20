@@ -49,7 +49,7 @@ const users = () => {
                 let tokens = await jwt.sign(tokenAccess, config.get('secrete.key'), jwtOptions);
                 let sql = await controller.conectionAndQuery();
                 await sql.query`DELETE FROM user_token WHERE UserId=${user.recordset[0].AlterId}`;
-                await sql.query`INSERT INTO user_token (UserId, token) VALUES (${user.recordset[0].AlterId}, ${tokens})`
+                await sql.query`INSERT INTO user_token (UserId, token, is_active) VALUES (${user.recordset[0].AlterId}, ${tokens},${1})`
                 return tokens;
             } catch (err) {
                 return res.status(400).send(controller.errorMsgFormat(err.message));
