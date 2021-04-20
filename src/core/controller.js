@@ -1,4 +1,4 @@
-
+require('dotenv').config()
 const sql = require('mssql')
 const controller = () => {
     return {
@@ -32,10 +32,10 @@ const controller = () => {
 
         async conectionAndQuery() {
             const config = {
-                user: 'admin',
-                password: 'Deva1234',
-                server: 'tally.cmkrmmjaj82j.us-east-2.rds.amazonaws.com', // You can use 'localhost\\instance' to connect to named instance
-                database: 'Tally',
+                user: process.env.USER,
+                password: process.env.PASSWORD,
+                server: process.env.SERVER, // You can use 'localhost\\instance' to connect to named instance
+                database: process.env.DATABASE,
             }
             // make sure that any items are correctly URL encoded in the connection string
             return await sql.connect(config)
