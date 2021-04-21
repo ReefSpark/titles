@@ -13,7 +13,7 @@ const productDetail = () => {
                     }));
                 }
                 let sql = await controller.conectionAndQuery()
-                let check = await sql.query`SELECT * FROM stg_item_details WHERE Name LIKE ${data}+'%'`;
+                let check = await sql.query`SELECT * FROM stg_item_details WHERE Name LIKE '%'+${data}+'%'`;
                 if (check.recordset.length == 0) {
                     return res.status(200).send(controller.successFormat("Data Successfully", {
                         result: []
